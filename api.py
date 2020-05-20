@@ -36,25 +36,33 @@ def get_quantity(code):
             print("Niewłaściwa ilość.")
 
 
+def currency_exchange():
+    while True:
+        response_rates = get_nbp_rates("https://api.nbp.pl/api/exchangerates/tables/A/")
+        currencies = get_all_available_currencies(response_rates)
 
-# while True:
-#     response_rates = get_nbp_rates("https://api.nbp.pl/api/exchangerates/tables/A/")
-#     currencies = get_all_available_currencies(response_rates)
-#
-#     code = get_code(currencies)
-#     quantity = get_quantity(code)
-#
-#     api = f'http://api.nbp.pl/api/exchangerates/rates/a/{code}/'
-#
-#     api_response = requests.get(api)
-#
-#     mid = float(extract_mid_json(api_response))
-#     kantor = mid * quantity
-#     print(round(kantor, 2))
-#     if input("Chcesz zamknąć? T/N ").upper() == "T":
-#         break
+        code = get_code(currencies)
+        quantity = get_quantity(code)
 
-while True:
-    response_gold = get_nbp_rates("http://api.nbp.pl/api/cenyzlota/today/")
-    print("Dzisiejsza cena złota to:", response_gold[0]["cena"], "\n0 oznacza, że nbp jeszcze nie podał danych.")
-    break
+        api = f'http://api.nbp.pl/api/exchangerates/rates/a/{code}/'
+
+        api_response = requests.get(api)
+
+        mid = float(extract_mid_json(api_response))
+        kantor = mid * quantity
+        print(round(kantor, 2))
+        if input("Chcesz zamknąć? T/N ").upper() == "T":
+            break
+
+
+currency_exchange()
+
+
+def gold_today():
+    while True:
+        response = get_nbp_rates("http://api.nbp.pl/api/cenyzlota/today/")
+        print("Dzisiejsza cena złota to:", response[0]["cena"], "\n0 oznacza, że nbp jeszcze nie podał danych.")
+        break
+
+
+gold_today()
