@@ -36,6 +36,13 @@ def get_quantity(code):
             print("Niewłaściwa ilość.")
 
 
+def gold_today():
+    while True:
+        response = get_nbp_rates("http://api.nbp.pl/api/cenyzlota/today/")
+        print("Dzisiejsza cena złota to:", response[0]["cena"], "\n0 oznacza, że nbp jeszcze nie podał danych.")
+        break
+
+
 def currency_exchange():
     while True:
         response_rates = get_nbp_rates("https://api.nbp.pl/api/exchangerates/tables/A/")
@@ -55,14 +62,17 @@ def currency_exchange():
             break
 
 
-currency_exchange()
-
-
-def gold_today():
-    while True:
-        response = get_nbp_rates("http://api.nbp.pl/api/cenyzlota/today/")
-        print("Dzisiejsza cena złota to:", response[0]["cena"], "\n0 oznacza, że nbp jeszcze nie podał danych.")
+while True:
+    print("\n>>\tMenu główne\t<<")
+    print("0 - Zamknij program")
+    print("1 - Przelicznik walutowy")
+    print("2 - Dzisiejsza wartość złota")
+    print("*Wszystkie dane są na podstawie notowań NBP.")
+    print(">>\t\t\t\t<<")
+    menu_option = input("W czym Ci mogę dzisiaj pomóc?\nWpisz numer z listy powyżej. ")
+    if menu_option == "1":
+        currency_exchange()
+    elif menu_option == "2":
+        gold_today()
+    elif menu_option == "0":
         break
-
-
-gold_today()
