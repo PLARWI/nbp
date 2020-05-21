@@ -80,7 +80,7 @@ def rates_over_time():
         f"http://api.nbp.pl/api/exchangerates/rates/a/{code}/{year_start}-{month_start}-{day_start}/{year_end}-{month_end}-{day_end}/")
     n = 0
     for elem in response["rates"]:
-        print("Data:", response["rates"][n]["effectiveDate"], ":", response["rates"][n]["mid"])
+        print("Średnia z dnia", response["rates"][n]["effectiveDate"], "wynosi", response["rates"][n]["mid"])
         n = n + 1
 
 
