@@ -1,4 +1,9 @@
 import requests
+import re
+
+CORRECT_YEAR = range(1990, 2021)
+CORRECT_MONTH = range(1, 13)
+CORRECT_DAYS = range(1, 32)
 
 
 def get_nbp_rates(endpoint):
@@ -62,26 +67,43 @@ def currency_exchange():
             break
 
 
+def get_date():
+    while True:
+        date = input("Data (w formacie RRRR-MM-DD): ")
+        if re.match("\d{4}-\d\d-\d\d", date):
+            year, month, day = date.split("-")
+            if int(year) not in CORRECT_YEAR:
+                print("Niewłaściwy rok.")
+                continue
+            if int(month) not in CORRECT_MONTH:
+                print("Niewłaściwy miesiąc.")
+                continue
+            if int(day) not in CORRECT_DAYS:
+                print("Niewłaściwy dzień.")
+                continue
+            return date
+        else:
+            print("Niepoprawny format daty.")
+
+
 def rates_over_time():
-    response = get_nbp_rates("https://api.nbp.pl/api/exchangerates/tables/a/")
-    currencies = get_all_available_currencies(response)
-    print(
-        f"Dane dla jakiej waluty (z poniżej wymienionych) chcesz sprawdzić?\n{', '.join(str(elem) for elem in currencies)}")
-    code = input("Trzy literowy kod waluty z lity powyżej: ")
-    print("Od kiedy?")
-    year_start = input("Rok (w formacie RRRR): ")
-    month_start = input("Miesiąc (w formacie MM): ")
-    day_start = input("Dzień (w formacie DD): ")
-    print("Do kiedy?")
-    year_end = input("Rok (w formacie RRRR): ")
-    month_end = input("Miesiąc (w formacie MM): ")
-    day_end = input("Dzień (w formacie DD): ")
-    response = get_nbp_rates(
-        f"http://api.nbp.pl/api/exchangerates/rates/a/{code}/{year_start}-{month_start}-{day_start}/{year_end}-{month_end}-{day_end}/")
-    n = 0
-    for elem in response["rates"]:
-        print("Średnia z dnia", response["rates"][n]["effectiveDate"], "wynosi", response["rates"][n]["mid"])
-        n = n + 1
+    while True:
+        response = get_nbp_rates("https://api.nbp.pl/api/exchangerates/tables/a/")
+        currencies = get_all_available_currencies(response)
+        print(
+            f"Dane dla jakiej waluty (z poniżej wymienionych) chcesz sprawdzić?\n{', '.join(str(elem) for elem in currencies)}")
+        code = input("Trzyliterowy kod waluty z listy powyżej: ")
+        print("Od kiedy?")
+        date_start = get_date()
+        print("Do kiedy?")
+        date_end = get_date()
+
+        response_with_data = get_nbp_rates(
+            f"http://api.nbp.pl/api/exchangerates/rates/a/{code}/{date_start}/{date_end}/")
+        for rate in response_with_data["rates"]:
+            print("Średnia z dnia", rate["effectiveDate"], "wynosi", rate["mid"])
+        if input("Chcesz zamknąć? T/N ").upper() == "T":
+            break
 
 
 while True:
